@@ -13,5 +13,7 @@ services:
     command: npm start
     volumes:
       - ./backend:/app
-    depends_on:
-      - web
+      - mounts_data:/app/mounts.json
+
+volumes:
+  mounts_data:

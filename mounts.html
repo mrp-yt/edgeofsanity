@@ -81,24 +81,7 @@
                     </tr>
                 </thead>
                 <tbody id="mounts-table-body">
-                    <!-- Sample Row -->
-                    <tr>
-                        <td>Sample Mount</td>
-                        <td>Sample Location</td>
-                        <td>
-                            <span class="coord-x">100</span>, <span class="coord-y">200</span>
-                            <button onclick="copyCoordinates(this)">Copy</button>
-                        </td>
-                        <td>will take some time</td>
-                        <td>1%</td>
-                        <td>0.5%</td>
-                        <td></td>
-                        <td class="mount-image-cell"></td>
-                        <td class="action-buttons">
-                            <button onclick="editRow(this)">Edit</button>
-                            <button onclick="deleteRow(this)">Delete</button>
-                        </td>
-                    </tr>
+                    <!-- Mounts will be loaded here dynamically -->
                 </tbody>
                 <tfoot>
                     <tr>
@@ -154,7 +137,42 @@
             }
         }
 
-        function addRow() {
+        async function loadMounts() {
+            const tableBody = document.getElementById('mounts-table-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            try {
+                const response = await fetch('http://localhost:3000/api/mounts');
+                const mounts = await response.json();
+
+                mounts.forEach(mount => {
+                    const newRow = tableBody.insertRow();
+                    newRow.dataset.id = mount.id; // Store the ID on the row
+                    newRow.innerHTML = `
+                        <td>${mount.mountName}</td>
+                        <td>${mount.location}</td>
+                        <td>
+                            <span class="coord-x">${mount.xCoord}</span>, <span class="coord-y">${mount.yCoord}</span>
+                            <button onclick="copyCoordinates(this)">Copy</button>
+                        </td>
+                        <td>${mount.difficulty}</td>
+                        <td>${mount.oldDropRate}</td>
+                        <td>${mount.newDropRate}</td>
+                        <td>${mount.addedBy}</td>
+                        <td class="mount-image-cell"></td>
+                        <td class="action-buttons">
+                            <button onclick="editRow(this)">Edit</button>
+                            <button onclick="deleteRow(this)">Delete</button>
+                        </td>
+                    `;
+                    fetchMountImage(mount.mountName, newRow);
+                });
+            } catch (error) {
+                console.error('Error loading mounts:', error);
+            }
+        }
+
+        async function addRow() {
             const tableBody = document.getElementById('mounts-table-body');
             const newMountName = document.getElementById('newMountName').value;
             const newLocation = document.getElementById('newLocation').value;
@@ -166,43 +184,70 @@
             const newAddedBy = document.getElementById('newAddedBy').value;
 
             if (newMountName && newLocation && newXCoord && newYCoord && newOldDropRate && newNewDropRate && newDifficulty) {
-                const newRow = tableBody.insertRow();
-                newRow.innerHTML = `
-                    <td>${newMountName}</td>
-                    <td>${newLocation}</td>
-                    <td>
-                        <span class="coord-x">${newXCoord}</span>, <span class="coord-y">${newYCoord}</span>
-                        <button onclick="copyCoordinates(this)">Copy</button>
-                    </td>
-                    <td>${newDifficulty}</td>
-                    <td>${newOldDropRate}</td>
-                    <td>${newNewDropRate}</td>
-                    <td>${newAddedBy}</td>
-                    <td class="mount-image-cell"></td>
-                    <td class="action-buttons">
-                        <button onclick="editRow(this)">Edit</button>
-                        <button onclick="deleteRow(this)">Delete</button>
-                    </td>
-                `;
+                const newMount = {
+                    mountName: newMountName,
+                    location: newLocation,
+                    xCoord: newXCoord,
+                    yCoord: newYCoord,
+                    difficulty: newDifficulty,
+                    oldDropRate: newOldDropRate,
+                    newDropRate: newNewDropRate,
+                    addedBy: newAddedBy
+                };
 
-                fetchMountImage(newMountName, newRow);
+                try {
+                    const response = await fetch('http://localhost:3000/api/mounts', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newMount)
+                    });
+                    const addedMount = await response.json();
 
-                // Clear input fields
-                document.getElementById('newMountName').value = '';
-                document.getElementById('newLocation').value = '';
-                document.getElementById('newXCoord').value = '';
-                document.getElementById('newYCoord').value = '';
-                document.getElementById('newDifficulty').value = 'eeaassyy'; // Reset to default
-                document.getElementById('newOldDropRate').value = '';
-                document.getElementById('newNewDropRate').value = '';
-                document.getElementById('newAddedBy').value = '';
+                    // Add the new row to the table
+                    const newRow = tableBody.insertRow();
+                    newRow.dataset.id = addedMount.id; // Store the ID on the row
+                    newRow.innerHTML = `
+                        <td>${addedMount.mountName}</td>
+                        <td>${addedMount.location}</td>
+                        <td>
+                            <span class="coord-x">${addedMount.xCoord}</span>, <span class="coord-y">${addedMount.yCoord}</span>
+                            <button onclick="copyCoordinates(this)">Copy</button>
+                        </td>
+                        <td>${addedMount.difficulty}</td>
+                        <td>${addedMount.oldDropRate}</td>
+                        <td>${addedMount.newDropRate}</td>
+                        <td>${addedMount.addedBy}</td>
+                        <td class="mount-image-cell"></td>
+                        <td class="action-buttons">
+                            <button onclick="editRow(this)">Edit</button>
+                            <button onclick="deleteRow(this)">Delete</button>
+                        </td>
+                    `;
+                    fetchMountImage(addedMount.mountName, newRow);
+
+                    // Clear input fields
+                    document.getElementById('newMountName').value = '';
+                    document.getElementById('newLocation').value = '';
+                    document.getElementById('newXCoord').value = '';
+                    document.getElementById('newYCoord').value = '';
+                    document.getElementById('newDifficulty').value = 'eeaassyy'; // Reset to default
+                    document.getElementById('newOldDropRate').value = '';
+                    document.getElementById('newNewDropRate').value = '';
+                    document.getElementById('newAddedBy').value = '';
+                } catch (error) {
+                    console.error('Error adding mount:', error);
+                    alert('Failed to add mount.');
+                }
             } else {
                 alert('Please fill in all required fields to add a new mount.');
             }
         }
 
-        function editRow(button) {
+        async function editRow(button) {
             const row = button.parentNode.parentNode;
+            const mountId = row.dataset.id; // Get the ID from the row
             const cells = row.querySelectorAll('td');
 
             // Get the NPC coordinates cell (index 2)
@@ -253,36 +298,67 @@
                 // Save NPC cell content
                 const newXCoord = npcCell.querySelector('input[data-coord="x"]').value;
                 const newYCoord = npcCell.querySelector('input[data-coord="y"]').value;
-                npcCell.innerHTML = `
-                    <span class="coord-x">${newXCoord}</span>, <span class="coord-y">${newYCoord}</span>
-                    <button onclick="copyCoordinates(this)">Copy</button>
-                `;
-
-                // Save Difficulty cell content
                 const newDifficulty = difficultyCell.querySelector('select').value;
-                difficultyCell.textContent = newDifficulty;
-
-                // Save Added by cell content
+                const newOldDropRate = cells[4].querySelector('input').value;
+                const newNewDropRate = cells[5].querySelector('input').value;
                 const newAddedBy = addedByCell.querySelector('input').value;
-                addedByCell.textContent = newAddedBy;
+                const mountName = cells[0].querySelector('input').value;
+                const location = cells[1].querySelector('input').value;
 
-                // Save other cells
-                cells.forEach((cell, index) => {
-                    // Exclude NPC cell (index 2), Difficulty cell (index 3), Added by cell (index 6), Image cell (index 7) and Actions cell (last cell)
-                    if (index !== 2 && index !== 3 && index !== 6 && index !== 7 && index !== cells.length - 1) {
-                        const input = cell.querySelector('input');
-                        if (input) {
-                            cell.textContent = input.value;
-                        }
-                    }
-                });
-                button.textContent = 'Edit';
+                const updatedMount = {
+                    id: mountId,
+                    mountName: mountName,
+                    location: location,
+                    xCoord: newXCoord,
+                    yCoord: newYCoord,
+                    difficulty: newDifficulty,
+                    oldDropRate: newOldDropRate,
+                    newDropRate: newNewDropRate,
+                    addedBy: newAddedBy
+                };
+
+                try {
+                    await fetch(`http://localhost:3000/api/mounts/${mountId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedMount)
+                    });
+
+                    // Update the row in the table
+                    npcCell.innerHTML = `
+                        <span class="coord-x">${newXCoord}</span>, <span class="coord-y">${newYCoord}</span>
+                        <button onclick="copyCoordinates(this)">Copy</button>
+                    `;
+                    difficultyCell.textContent = newDifficulty;
+                    addedByCell.textContent = newAddedBy;
+                    cells[0].textContent = mountName;
+                    cells[1].textContent = location;
+                    cells[4].textContent = newOldDropRate;
+                    cells[5].textContent = newNewDropRate;
+
+                    button.textContent = 'Edit';
+                } catch (error) {
+                    console.error('Error updating mount:', error);
+                    alert('Failed to update mount.');
+                }
             }
         }
 
-        function deleteRow(button) {
+        async function deleteRow(button) {
             const row = button.parentNode.parentNode;
-            row.parentNode.removeChild(row);
+            const mountId = row.dataset.id; // Get the ID from the row
+
+            try {
+                await fetch(`http://localhost:3000/api/mounts/${mountId}`, {
+                    method: 'DELETE'
+                });
+                row.parentNode.removeChild(row);
+            } catch (error) {
+                console.error('Error deleting mount:', error);
+                alert('Failed to delete mount.');
+            }
         }
 
         function copyCoordinates(button) {
@@ -298,14 +374,8 @@
             });
         }
 
-        // Fetch images for existing rows on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const rows = document.querySelectorAll('#mounts-table-body tr');
-            rows.forEach(row => {
-                const mountName = row.querySelector('td:first-child').textContent;
-                fetchMountImage(mountName, row);
-            });
-        });
+        // Load mounts on page load
+        document.addEventListener('DOMContentLoaded', loadMounts);
     </script>
 
 </body>
