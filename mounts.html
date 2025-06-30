@@ -71,6 +71,7 @@
                         <th>Mount Name</th>
                         <th>Location</th>
                         <th>NPC</th>
+                        <th>Difficulty</th>
                         <th>Old Drop Rate</th>
                         <th>New Drop Rate</th>
                         <th>Added by....</th>
@@ -86,6 +87,7 @@
                             <span class="coord-x">100</span>, <span class="coord-y">200</span>
                             <button onclick="copyCoordinates(this)">Copy</button>
                         </td>
+                        <td>will take some time</td>
                         <td>1%</td>
                         <td>0.5%</td>
                         <td></td>
@@ -102,6 +104,14 @@
                         <td class="coord-inputs">
                             <input type="text" id="newXCoord" class="edit-input" placeholder="X">
                             <input type="text" id="newYCoord" class="edit-input" placeholder="Y">
+                        </td>
+                        <td>
+                            <select id="newDifficulty" class="edit-input">
+                                <option value="eeaassyy">eeaassyy</option>
+                                <option value="will take some time">will take some time</option>
+                                <option value="2 months if you lucky">2 months if you lucky</option>
+                                <option value="no chance bro!">no chance bro!</option>
+                            </select>
                         </td>
                         <td><input type="text" id="newOldDropRate" class="edit-input" placeholder="Old Drop Rate"></td>
                         <td><input type="text" id="newNewDropRate" class="edit-input" placeholder="New Drop Rate"></td>
@@ -123,11 +133,12 @@
             const newLocation = document.getElementById('newLocation').value;
             const newXCoord = document.getElementById('newXCoord').value;
             const newYCoord = document.getElementById('newYCoord').value;
+            const newDifficulty = document.getElementById('newDifficulty').value;
             const newOldDropRate = document.getElementById('newOldDropRate').value;
             const newNewDropRate = document.getElementById('newNewDropRate').value;
             const newAddedBy = document.getElementById('newAddedBy').value;
 
-            if (newMountName && newLocation && newXCoord && newYCoord && newOldDropRate && newNewDropRate) {
+            if (newMountName && newLocation && newXCoord && newYCoord && newOldDropRate && newNewDropRate && newDifficulty) {
                 const newRow = tableBody.insertRow();
                 newRow.innerHTML = `
                     <td>${newMountName}</td>
@@ -136,6 +147,7 @@
                         <span class="coord-x">${newXCoord}</span>, <span class="coord-y">${newYCoord}</span>
                         <button onclick="copyCoordinates(this)">Copy</button>
                     </td>
+                    <td>${newDifficulty}</td>
                     <td>${newOldDropRate}</td>
                     <td>${newNewDropRate}</td>
                     <td>${newAddedBy}</td>
@@ -150,11 +162,12 @@
                 document.getElementById('newLocation').value = '';
                 document.getElementById('newXCoord').value = '';
                 document.getElementById('newYCoord').value = '';
+                document.getElementById('newDifficulty').value = 'eeaassyy'; // Reset to default
                 document.getElementById('newOldDropRate').value = '';
                 document.getElementById('newNewDropRate').value = '';
                 document.getElementById('newAddedBy').value = '';
             } else {
-                alert('Please fill in all fields to add a new mount.');
+                alert('Please fill in all required fields to add a new mount.');
             }
         }
 
@@ -164,6 +177,8 @@
 
             // Get the NPC coordinates cell (index 2)
             const npcCell = cells[2];
+            // Get the Difficulty cell (index 3)
+            const difficultyCell = cells[3];
 
             if (button.textContent === 'Edit') {
                 // Store current values for NPC cell
@@ -176,10 +191,22 @@
                     <input type="text" class="edit-input" value="${yCoord}" data-coord="y">
                 `;
 
+                // Store current value for Difficulty cell
+                const currentDifficulty = difficultyCell.textContent;
+                // Replace Difficulty cell content with dropdown
+                difficultyCell.innerHTML = `
+                    <select class="edit-input">
+                        <option value="eeaassyy" ${currentDifficulty === 'eeaassyy' ? 'selected' : ''}>eeaassyy</option>
+                        <option value="will take some time" ${currentDifficulty === 'will take some time' ? 'selected' : ''}>will take some time</option>
+                        <option value="2 months if you lucky" ${currentDifficulty === '2 months if you lucky' ? 'selected' : ''}>2 months if you lucky</option>
+                        <option value="no chance bro!" ${currentDifficulty === 'no chance bro!' ? 'selected' : ''}>no chance bro!</option>
+                    </select>
+                `;
+
                 // Handle other cells
                 cells.forEach((cell, index) => {
-                    // Exclude NPC cell (index 2) and Actions cell (last cell)
-                    if (index !== 2 && index !== cells.length - 1) {
+                    // Exclude NPC cell (index 2), Difficulty cell (index 3), and Actions cell (last cell)
+                    if (index !== 2 && index !== 3 && index !== cells.length - 1) {
                         const text = cell.textContent;
                         cell.innerHTML = `<input type="text" class="edit-input" value="${text}">`;
                     }
@@ -194,10 +221,14 @@
                     <button onclick="copyCoordinates(this)">Copy</button>
                 `;
 
+                // Save Difficulty cell content
+                const newDifficulty = difficultyCell.querySelector('select').value;
+                difficultyCell.textContent = newDifficulty;
+
                 // Save other cells
                 cells.forEach((cell, index) => {
-                    // Exclude NPC cell (index 2) and Actions cell (last cell)
-                    if (index !== 2 && index !== cells.length - 1) {
+                    // Exclude NPC cell (index 2), Difficulty cell (index 3), and Actions cell (last cell)
+                    if (index !== 2 && index !== 3 && index !== cells.length - 1) {
                         const input = cell.querySelector('input');
                         if (input) {
                             cell.textContent = input.value;
