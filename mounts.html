@@ -116,7 +116,7 @@
     <script>
         async function fetchMountImage(mountName, row) {
             try {
-                const response = await fetch('http://localhost:3000/api/mount-image', {
+                const response = await fetch('/api/mount-image', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -142,7 +142,7 @@
             tableBody.innerHTML = ''; // Clear existing rows
 
             try {
-                const response = await fetch('http://localhost:3000/api/mounts');
+                const response = await fetch('/api/mounts');
                 const mounts = await response.json();
 
                 mounts.forEach(mount => {
@@ -196,7 +196,7 @@
                 };
 
                 try {
-                    const response = await fetch('http://localhost:3000/api/mounts', {
+                    const response = await fetch('/api/mounts', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -324,7 +324,7 @@
                 };
 
                 try {
-                    await fetch(`http://localhost:3000/api/mounts/${mountId}`, {
+                    await fetch(`/api/mounts/${mountId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -357,7 +357,7 @@
             const mountId = row.dataset.id; // Get the ID from the row
 
             try {
-                await fetch(`http://localhost:3000/api/mounts/${mountId}`, {
+                await fetch(`/api/mounts/${mountId}`, {
                     method: 'DELETE'
                 });
                 row.parentNode.removeChild(row);

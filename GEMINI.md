@@ -2,6 +2,8 @@
 
 We always start with planning. Do not start work on anything. first you give me plan. explain what will be done and wait for my instructions to start work.
 If code needs to be pushed to GIT. always push to "dev" unless i will instruct you to update "main"
+If you changed any code. always recreate docker file and start all containers fresh
+
 
 ## Project 
 Create a webserver that runs in docker
