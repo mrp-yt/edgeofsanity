@@ -22,7 +22,7 @@ app.post('/api/mount-image', async (req, res) => {
         const $search = cheerio.load(searchData);
 
         // Find the first relevant mount link
-        const mountLink = $search('a.listview-cleartext[href*="/item="], a.listview-cleartext[href*="/spell="]').first().attr('href');
+        const mountLink = $search('a.listview-cleartext[href*="/item="], a.listview-cleartext[href*="/spell="], a.listview-cleartext[href*="/achievement="]').first().attr('href');
 
         if (!mountLink) {
             return res.status(404).json({ error: 'Mount not found on Wowhead.' });
