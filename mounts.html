@@ -47,8 +47,6 @@
 </head>
 <body>
 
-    
-
     <div class="header">
         <h1>Edge of Sanity</h1>
         <nav class="nav">
@@ -75,6 +73,7 @@
                         <th>NPC</th>
                         <th>Old Drop Rate</th>
                         <th>New Drop Rate</th>
+                        <th>Added by....</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -89,6 +88,7 @@
                         </td>
                         <td>1%</td>
                         <td>0.5%</td>
+                        <td></td>
                         <td class="action-buttons">
                             <button onclick="editRow(this)">Edit</button>
                             <button onclick="deleteRow(this)">Delete</button>
@@ -105,6 +105,7 @@
                         </td>
                         <td><input type="text" id="newOldDropRate" class="edit-input" placeholder="Old Drop Rate"></td>
                         <td><input type="text" id="newNewDropRate" class="edit-input" placeholder="New Drop Rate"></td>
+                        <td><input type="text" id="newAddedBy" class="edit-input" placeholder="Added by..."></td>
                         <td class="action-buttons">
                             <button onclick="addRow()">Add</button>
                         </td>
@@ -114,5 +115,117 @@
         </div>
     </div>
 
-    </body>
+    <script src="script.js"></script>
+    <script>
+        function addRow() {
+            const tableBody = document.getElementById('mounts-table-body');
+            const newMountName = document.getElementById('newMountName').value;
+            const newLocation = document.getElementById('newLocation').value;
+            const newXCoord = document.getElementById('newXCoord').value;
+            const newYCoord = document.getElementById('newYCoord').value;
+            const newOldDropRate = document.getElementById('newOldDropRate').value;
+            const newNewDropRate = document.getElementById('newNewDropRate').value;
+            const newAddedBy = document.getElementById('newAddedBy').value;
+
+            if (newMountName && newLocation && newXCoord && newYCoord && newOldDropRate && newNewDropRate) {
+                const newRow = tableBody.insertRow();
+                newRow.innerHTML = `
+                    <td>${newMountName}</td>
+                    <td>${newLocation}</td>
+                    <td>
+                        <span class="coord-x">${newXCoord}</span>, <span class="coord-y">${newYCoord}</span>
+                        <button onclick="copyCoordinates(this)">Copy</button>
+                    </td>
+                    <td>${newOldDropRate}</td>
+                    <td>${newNewDropRate}</td>
+                    <td>${newAddedBy}</td>
+                    <td class="action-buttons">
+                        <button onclick="editRow(this)">Edit</button>
+                        <button onclick="deleteRow(this)">Delete</button>
+                    </td>
+                `;
+
+                // Clear input fields
+                document.getElementById('newMountName').value = '';
+                document.getElementById('newLocation').value = '';
+                document.getElementById('newXCoord').value = '';
+                document.getElementById('newYCoord').value = '';
+                document.getElementById('newOldDropRate').value = '';
+                document.getElementById('newNewDropRate').value = '';
+                document.getElementById('newAddedBy').value = '';
+            } else {
+                alert('Please fill in all fields to add a new mount.');
+            }
+        }
+
+        function editRow(button) {
+            const row = button.parentNode.parentNode;
+            const cells = row.querySelectorAll('td');
+
+            // Get the NPC coordinates cell (index 2)
+            const npcCell = cells[2];
+
+            if (button.textContent === 'Edit') {
+                // Store current values for NPC cell
+                const xCoord = npcCell.querySelector('.coord-x').textContent;
+                const yCoord = npcCell.querySelector('.coord-y').textContent;
+
+                // Replace NPC cell content with input fields
+                npcCell.innerHTML = `
+                    <input type="text" class="edit-input" value="${xCoord}" data-coord="x">
+                    <input type="text" class="edit-input" value="${yCoord}" data-coord="y">
+                `;
+
+                // Handle other cells
+                cells.forEach((cell, index) => {
+                    // Exclude NPC cell (index 2) and Actions cell (last cell)
+                    if (index !== 2 && index !== cells.length - 1) {
+                        const text = cell.textContent;
+                        cell.innerHTML = `<input type="text" class="edit-input" value="${text}">`;
+                    }
+                });
+                button.textContent = 'Save';
+            } else {
+                // Save NPC cell content
+                const newXCoord = npcCell.querySelector('input[data-coord="x"]').value;
+                const newYCoord = npcCell.querySelector('input[data-coord="y"]').value;
+                npcCell.innerHTML = `
+                    <span class="coord-x">${newXCoord}</span>, <span class="coord-y">${newYCoord}</span>
+                    <button onclick="copyCoordinates(this)">Copy</button>
+                `;
+
+                // Save other cells
+                cells.forEach((cell, index) => {
+                    // Exclude NPC cell (index 2) and Actions cell (last cell)
+                    if (index !== 2 && index !== cells.length - 1) {
+                        const input = cell.querySelector('input');
+                        if (input) {
+                            cell.textContent = input.value;
+                        }
+                    }
+                });
+                button.textContent = 'Edit';
+            }
+        }
+
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
+        function copyCoordinates(button) {
+            const row = button.parentNode.parentNode;
+            const xCoord = row.querySelector('.coord-x').textContent;
+            const yCoord = row.querySelector('.coord-y').textContent;
+            const textToCopy = `/way ${xCoord} ${yCoord}`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert(`Copied: ${textToCopy}`);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
+
+</body>
 </html>
