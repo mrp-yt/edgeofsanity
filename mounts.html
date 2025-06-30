@@ -203,6 +203,12 @@
                         },
                         body: JSON.stringify(newMount)
                     });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                    }
+
                     const addedMount = await response.json();
 
                     // Add the new row to the table
@@ -238,7 +244,7 @@
                     document.getElementById('newAddedBy').value = '';
                 } catch (error) {
                     console.error('Error adding mount:', error);
-                    alert('Failed to add mount.');
+                    alert(`Failed to add mount: ${error.message}`);
                 }
             } else {
                 alert('Please fill in all required fields to add a new mount.');

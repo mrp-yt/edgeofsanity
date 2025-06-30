@@ -8,7 +8,7 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-const mountsFilePath = path.join(__dirname, 'mounts.json');
+const mountsFilePath = path.join(__dirname, 'data', 'mounts.json');
 
 let mounts = [];
 
