@@ -24,7 +24,8 @@ function submitPin() {
     if (enteredPin === correctPin) {
         sessionStorage.setItem('websitePin', enteredPin);
         document.getElementById('pin-gate').style.display = 'none';
-        document.getElementById('page-content').style.display = 'block';
+        document.getElementById('page-content').style.display = ''; // Revert to default display (block for div)
+        console.log("PIN correct. Showing page content.");
     } else {
         alert('Incorrect PIN. Please try again.');
         document.getElementById('pin-input').value = '';
