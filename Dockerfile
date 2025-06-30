@@ -25,6 +25,7 @@ WORKDIR /app/backend
 COPY backend/package.json ./
 COPY backend/server.js ./
 RUN npm install
+RUN touch mounts.json && chmod 666 mounts.json
 
 # Expose ports
 EXPOSE 80
