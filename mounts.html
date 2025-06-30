@@ -190,7 +190,6 @@
             const newNewDropRate = document.getElementById('newNewDropRate').value;
             const newAddedBy = document.getElementById('newAddedBy').value;
 
-            console.log('Attempting to add mount:', newMount);
             if (newMountName && newLocation && newXCoord && newYCoord && newOldDropRate && newNewDropRate && newDifficulty) {
                 const newMount = {
                     mountName: newMountName,
@@ -202,6 +201,7 @@
                     newDropRate: newNewDropRate,
                     addedBy: newAddedBy
                 };
+                console.log('Attempting to add mount:', newMount);
 
                 try {
                     console.log('Sending POST request to /api/mounts with data:', newMount);
