@@ -5,6 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edge of Sanity - Mounts</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #555;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+        }
+        .light-mode th {
+            background-color: #ccc;
+        }
+        .edit-input {
+            width: 90%;
+            padding: 5px;
+            border: 1px solid #777;
+            background-color: #222;
+            color: #eee;
+        }
+        .light-mode .edit-input {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+        .action-buttons button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
@@ -24,9 +59,110 @@
     <div class="container">
         <h2>Mounts</h2>
         <p>This is the mounts page.</p>
+
+        <div id="mounts-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mount Name</th>
+                        <th>Location</th>
+                        <th>Coordinates</th>
+                        <th>Old Drop Rate</th>
+                        <th>New Drop Rate</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="mounts-table-body">
+                    <!-- Sample Row -->
+                    <tr>
+                        <td>Sample Mount</td>
+                        <td>Sample Location</td>
+                        <td>X:100, Y:200</td>
+                        <td>1%</td>
+                        <td>0.5%</td>
+                        <td class="action-buttons">
+                            <button onclick="editRow(this)">Edit</button>
+                            <button onclick="deleteRow(this)">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td><input type="text" id="newMountName" class="edit-input" placeholder="Mount Name"></td>
+                        <td><input type="text" id="newLocation" class="edit-input" placeholder="Location"></td>
+                        <td><input type="text" id="newCoordinates" class="edit-input" placeholder="Coordinates"></td>
+                        <td><input type="text" id="newOldDropRate" class="edit-input" placeholder="Old Drop Rate"></td>
+                        <td><input type="text" id="newNewDropRate" class="edit-input" placeholder="New Drop Rate"></td>
+                        <td class="action-buttons">
+                            <button onclick="addRow()">Add</button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
 
     <script src="script.js"></script>
+    <script>
+        function addRow() {
+            const tableBody = document.getElementById('mounts-table-body');
+            const newMountName = document.getElementById('newMountName').value;
+            const newLocation = document.getElementById('newLocation').value;
+            const newCoordinates = document.getElementById('newCoordinates').value;
+            const newOldDropRate = document.getElementById('newOldDropRate').value;
+            const newNewDropRate = document.getElementById('newNewDropRate').value;
+
+            if (newMountName && newLocation && newCoordinates && newOldDropRate && newNewDropRate) {
+                const newRow = tableBody.insertRow();
+                newRow.innerHTML = `
+                    <td>${newMountName}</td>
+                    <td>${newLocation}</td>
+                    <td>${newCoordinates}</td>
+                    <td>${newOldDropRate}</td>
+                    <td>${newNewDropRate}</td>
+                    <td class="action-buttons">
+                        <button onclick="editRow(this)">Edit</button>
+                        <button onclick="deleteRow(this)">Delete</button>
+                    </td>
+                `;
+
+                // Clear input fields
+                document.getElementById('newMountName').value = '';
+                document.getElementById('newLocation').value = '';
+                document.getElementById('newCoordinates').value = '';
+                document.getElementById('newOldDropRate').value = '';
+                document.getElementById('newNewDropRate').value = '';
+            } else {
+                alert('Please fill in all fields to add a new mount.');
+            }
+        }
+
+        function editRow(button) {
+            const row = button.parentNode.parentNode;
+            const cells = row.querySelectorAll('td:not(.action-buttons)');
+
+            if (button.textContent === 'Edit') {
+                cells.forEach(cell => {
+                    const text = cell.textContent;
+                    cell.innerHTML = `<input type="text" class="edit-input" value="${text}">`;
+                });
+                button.textContent = 'Save';
+            } else {
+                cells.forEach(cell => {
+                    const input = cell.querySelector('input');
+                    if (input) {
+                        cell.textContent = input.value;
+                    }
+                });
+                button.textContent = 'Edit';
+            }
+        }
+
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    </script>
 
 </body>
 </html>
