@@ -138,12 +138,19 @@
         }
 
         async function loadMounts() {
+            console.log('Loading mounts...');
             const tableBody = document.getElementById('mounts-table-body');
             tableBody.innerHTML = ''; // Clear existing rows
 
             try {
+                console.log('Sending GET request to /api/mounts');
                 const response = await fetch('/api/mounts');
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
                 const mounts = await response.json();
+                console.log('Mounts loaded:', mounts);
 
                 mounts.forEach(mount => {
                     const newRow = tableBody.insertRow();
@@ -183,6 +190,7 @@
             const newNewDropRate = document.getElementById('newNewDropRate').value;
             const newAddedBy = document.getElementById('newAddedBy').value;
 
+            console.log('Attempting to add mount:', newMount);
             if (newMountName && newLocation && newXCoord && newYCoord && newOldDropRate && newNewDropRate && newDifficulty) {
                 const newMount = {
                     mountName: newMountName,
@@ -196,6 +204,7 @@
                 };
 
                 try {
+                    console.log('Sending POST request to /api/mounts with data:', newMount);
                     const response = await fetch('/api/mounts', {
                         method: 'POST',
                         headers: {
