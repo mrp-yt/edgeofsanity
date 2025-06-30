@@ -6,3 +6,12 @@ services:
       - "8080:80"
     volumes:
       - ./:/usr/share/nginx/html
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    command: npm start
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - web

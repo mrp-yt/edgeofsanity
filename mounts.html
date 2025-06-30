@@ -76,6 +76,7 @@
                         <th>Old Drop Rate</th>
                         <th>New Drop Rate</th>
                         <th>Added by....</th>
+                        <th>Image</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -92,6 +93,7 @@
                         <td>1%</td>
                         <td>0.5%</td>
                         <td></td>
+                        <td class="mount-image-cell"></td>
                         <td class="action-buttons">
                             <button onclick="editRow(this)">Edit</button>
                             <button onclick="deleteRow(this)">Delete</button>
@@ -117,6 +119,7 @@
                         <td><input type="text" id="newOldDropRate" class="edit-input" placeholder="Old Drop Rate"></td>
                         <td><input type="text" id="newNewDropRate" class="edit-input" placeholder="New Drop Rate"></td>
                         <td><input type="text" id="newAddedBy" class="edit-input" placeholder="Added by..."></td>
+                        <td></td>
                         <td class="action-buttons">
                             <button onclick="addRow()">Add</button>
                         </td>
@@ -128,6 +131,29 @@
 
     <script src="script.js"></script>
     <script>
+        async function fetchMountImage(mountName, row) {
+            try {
+                const response = await fetch('http://localhost:3000/api/mount-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ mountName })
+                });
+                const data = await response.json();
+
+                const imageCell = row.querySelector('.mount-image-cell');
+                if (data.imageUrl) {
+                    imageCell.innerHTML = `<button onclick="window.open('${data.imageUrl}', '_blank')">View Image</button>`;
+                } else {
+                    imageCell.textContent = 'No Image';
+                }
+            } catch (error) {
+                console.error('Error fetching mount image:', error);
+                row.querySelector('.mount-image-cell').textContent = 'Error';
+            }
+        }
+
         function addRow() {
             const tableBody = document.getElementById('mounts-table-body');
             const newMountName = document.getElementById('newMountName').value;
@@ -152,11 +178,14 @@
                     <td>${newOldDropRate}</td>
                     <td>${newNewDropRate}</td>
                     <td>${newAddedBy}</td>
+                    <td class="mount-image-cell"></td>
                     <td class="action-buttons">
                         <button onclick="editRow(this)">Edit</button>
                         <button onclick="deleteRow(this)">Delete</button>
                     </td>
                 `;
+
+                fetchMountImage(newMountName, newRow);
 
                 // Clear input fields
                 document.getElementById('newMountName').value = '';
@@ -180,6 +209,8 @@
             const npcCell = cells[2];
             // Get the Difficulty cell (index 3)
             const difficultyCell = cells[3];
+            // Get the Added by cell (index 6)
+            const addedByCell = cells[6];
 
             if (button.textContent === 'Edit') {
                 // Store current values for NPC cell
@@ -199,15 +230,20 @@
                     <select class="edit-input">
                         <option value="eeaassyy" ${currentDifficulty === 'eeaassyy' ? 'selected' : ''}>eeaassyy</option>
                         <option value="will take some time" ${currentDifficulty === 'will take some time' ? 'selected' : ''}>will take some time</option>
-                        <td>3+ months if you lucky</td>
+                        <option value="3+ months if you lucky" ${currentDifficulty === '3+ months if you lucky' ? 'selected' : ''}>3+ months if you lucky</option>
                         <option value="no chance bro!" ${currentDifficulty === 'no chance bro!' ? 'selected' : ''}>no chance bro!</option>
                     </select>
                 `;
 
+                // Store current value for Added by cell
+                const currentAddedBy = addedByCell.textContent;
+                // Replace Added by cell content with input field
+                addedByCell.innerHTML = `<input type="text" class="edit-input" value="${currentAddedBy}">`;
+
                 // Handle other cells
                 cells.forEach((cell, index) => {
-                    // Exclude NPC cell (index 2), Difficulty cell (index 3), and Actions cell (last cell)
-                    if (index !== 2 && index !== 3 && index !== cells.length - 1) {
+                    // Exclude NPC cell (index 2), Difficulty cell (index 3), Added by cell (index 6), Image cell (index 7) and Actions cell (last cell)
+                    if (index !== 2 && index !== 3 && index !== 6 && index !== 7 && index !== cells.length - 1) {
                         const text = cell.textContent;
                         cell.innerHTML = `<input type="text" class="edit-input" value="${text}">`;
                     }
@@ -226,10 +262,14 @@
                 const newDifficulty = difficultyCell.querySelector('select').value;
                 difficultyCell.textContent = newDifficulty;
 
+                // Save Added by cell content
+                const newAddedBy = addedByCell.querySelector('input').value;
+                addedByCell.textContent = newAddedBy;
+
                 // Save other cells
                 cells.forEach((cell, index) => {
-                    // Exclude NPC cell (index 2), Difficulty cell (index 3), and Actions cell (last cell)
-                    if (index !== 2 && index !== 3 && index !== cells.length - 1) {
+                    // Exclude NPC cell (index 2), Difficulty cell (index 3), Added by cell (index 6), Image cell (index 7) and Actions cell (last cell)
+                    if (index !== 2 && index !== 3 && index !== 6 && index !== 7 && index !== cells.length - 1) {
                         const input = cell.querySelector('input');
                         if (input) {
                             cell.textContent = input.value;
@@ -257,6 +297,15 @@
                 console.error('Failed to copy: ', err);
             });
         }
+
+        // Fetch images for existing rows on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const rows = document.querySelectorAll('#mounts-table-body tr');
+            rows.forEach(row => {
+                const mountName = row.querySelector('td:first-child').textContent;
+                fetchMountImage(mountName, row);
+            });
+        });
     </script>
 
 </body>
