@@ -76,12 +76,28 @@
                         <th>Old Drop Rate</th>
                         <th>New Drop Rate</th>
                         <th>Added by....</th>
-                        <th>Image</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="mounts-table-body">
                     <!-- Mounts will be loaded here dynamically -->
+                    <!-- Sample Row (removed image cell) -->
+                    <tr>
+                        <td>Sample Mount</td>
+                        <td>Sample Location</td>
+                        <td>
+                            <span class="coord-x">100</span>, <span class="coord-y">200</span>
+                            <button onclick="copyCoordinates(this)">Copy</button>
+                        </td>
+                        <td>will take some time</td>
+                        <td>1%</td>
+                        <td>0.5%</td>
+                        <td></td>
+                        <td class="action-buttons">
+                            <button onclick="editRow(this)">Edit</button>
+                            <button onclick="deleteRow(this)">Delete</button>
+                        </td>
+                    </tr>
                 </tbody>
                 <tfoot>
                     <tr>
@@ -102,7 +118,6 @@
                         <td><input type="text" id="newOldDropRate" class="edit-input" placeholder="Old Drop Rate"></td>
                         <td><input type="text" id="newNewDropRate" class="edit-input" placeholder="New Drop Rate"></td>
                         <td><input type="text" id="newAddedBy" class="edit-input" placeholder="Added by..."></td>
-                        <td></td>
                         <td class="action-buttons">
                             <button onclick="addRow()">Add</button>
                         </td>
@@ -114,28 +129,7 @@
 
     <script src="script.js"></script>
     <script>
-        async function fetchMountImage(mountName, row) {
-            try {
-                const response = await fetch('/api/mount-image', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ mountName })
-                });
-                const data = await response.json();
-
-                const imageCell = row.querySelector('.mount-image-cell');
-                if (data.imageUrl) {
-                    imageCell.innerHTML = `<button onclick="window.open('${data.imageUrl}', '_blank')">View Image</button>`;
-                } else {
-                    imageCell.textContent = 'No Image';
-                }
-            } catch (error) {
-                console.error('Error fetching mount image:', error);
-                row.querySelector('.mount-image-cell').textContent = 'Error';
-            }
-        }
+        // Removed fetchMountImage function
 
         async function loadMounts() {
             console.log('Loading mounts...');
@@ -166,13 +160,12 @@
                         <td>${mount.oldDropRate}</td>
                         <td>${mount.newDropRate}</td>
                         <td>${mount.addedBy}</td>
-                        <td class="mount-image-cell"></td>
                         <td class="action-buttons">
                             <button onclick="editRow(this)">Edit</button>
                             <button onclick="deleteRow(this)">Delete</button>
                         </td>
                     `;
-                    fetchMountImage(mount.mountName, newRow);
+                    // Removed fetchMountImage call
                 });
             } catch (error) {
                 console.error('Error loading mounts:', error);
@@ -234,13 +227,12 @@
                         <td>${addedMount.oldDropRate}</td>
                         <td>${addedMount.newDropRate}</td>
                         <td>${addedMount.addedBy}</td>
-                        <td class="mount-image-cell"></td>
                         <td class="action-buttons">
                             <button onclick="editRow(this)">Edit</button>
                             <button onclick="deleteRow(this)">Delete</button>
                         </td>
                     `;
-                    fetchMountImage(addedMount.mountName, newRow);
+                    // Removed fetchMountImage call
 
                     // Clear input fields
                     document.getElementById('newMountName').value = '';
@@ -302,8 +294,8 @@
 
                 // Handle other cells
                 cells.forEach((cell, index) => {
-                    // Exclude NPC cell (index 2), Difficulty cell (index 3), Added by cell (index 6), Image cell (index 7) and Actions cell (last cell)
-                    if (index !== 2 && index !== 3 && index !== 6 && index !== 7 && index !== cells.length - 1) {
+                    // Exclude NPC cell (index 2), Difficulty cell (index 3), Added by cell (index 6) and Actions cell (last cell)
+                    if (index !== 2 && index !== 3 && index !== 6 && index !== cells.length - 1) {
                         const text = cell.textContent;
                         cell.innerHTML = `<input type="text" class="edit-input" value="${text}">`;
                     }

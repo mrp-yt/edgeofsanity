@@ -1,0 +1,51 @@
+location	mount	old droprate	new droprate
+			
+temple of ahn'qiraj (world drop)	blue qiraji battle tank		
+temple of ahn'qiraj (world drop)	green qiraji battle tank		
+temple of ahn'qiraj (world drop)	red qiraji battle tank		
+temple of ahn'qiraj (world drop)	yellow qiraji battle tank		
+stratholme (lord aurius rivendare)	rivendare's deathcharger	0.9	9
+the eye, tempest keep (kael'thas sunstrider)	ashes of al'ar	1.7	17
+karazhan raid (attumen the huntsman)	fiery warhorse	1.1	11
+sethekk halls hc (anzu)	raven lord	1.61	16
+magister's terrace (kael'thas sunstrider)	swift white hawkstrider	4	40
+eye of eternity (alexstrasza's gift)	azure drake		
+eye of eternity (alexstrasza's gift)	blue drake		
+vault of archavon (any boss)	grand black war mammoth	0.8	8
+ulduar (yogg-saron)	mimiron's head	1	10
+onyxia's lair (onxyia)	onyxian drake	1.5	15
+icecrown citadel (the lich king)	invincible	0.8	8
+utgarde pinnacle (skadi the ruthless)	blue proto-drake	0.8	8
+throne of the four winds (al'akir)	drake of the south wind	1.1	11
+firelands (ragnaros)	pureblood fire hawk	1.5	15
+firelands (alysrazor)	flametalon of alysrazor	2.4	24
+dragonsoul (lesser cache of the aspects)	experiment 12b	1.1	11
+dragonsoul (elementium fragment)	blazing drake	3	30
+dragonsoul (elementium fragment)	Life-binder's handmaiden	1.7	17
+the vortex pinnacle (altairus)	drake of the north wind	0.7	7
+the stonecore (slabhide)	vitreous stone drake	0.7	7
+zul'gurub (bloodlord mandokir)	armored razzashi raptor	0.7	7
+zul'gurub (high priestess kilnara)	swift zulian panther	0.9	9
+mogushan vault (cache of pure energy)	astral cloud serpent	3.5	35
+throne of thunder (ji-kun)	clutch of ji-kun	2.3	23
+throne of thunder (horridon)	spawn of horridon	2.4	24
+siege of orgrimmar (garrosh hellscream)	kor'kron juggernaut	0.9	9
+blackrock foundry mythic (blackhand)	ironhoof destroyer	2.2	22
+hellfire citadal mythic (archimonde)	felsteel annihilator	3.5	35
+the nighthold (gul'dan)	felblaze infernal	0.6	6
+the nighthold mythic (gul'dan)	hellfire infernal	0.8	8
+tomb of sargeras (mistress sassz'ine)	abyss worm	0.21	2
+antorus the burning throne (shatug)	antoran charhound	0.4	4
+antorus the burning throne mythic (argus the unmaker)	shackled ur'zul mythic	0.8	8
+return to karazhan dungeon (attumen the huntsman)	midnight	0.9	9
+battle of dazar'alor (high tinker mekkatorgue)	G.M.O.D.	0.4	4
+battle of dazar'alor mythic (jaina proudmoore)	glacial tidestorm	0.6	6
+ny'alotha mythic (n'zoth the corruptor)	ny'alotha allseer	0.6	6
+kings' rest mythic (king dazar)	tomb stalker	0.7	7
+underrot mythic (unbound abomination)	underrot crawg	0.16	1.6
+freehold mythic (harlan sweete)	sharkbait	0.2	2
+sanctum of domination (the nine)	Sanctum gloomcharger	0.3	3
+sanctum of domination mythic (lady sylvanas windrunner)	vengeance	0.4	4
+sepulcher of the first ones mythic (the jailer)	zereth overseer	0.5	5
+tazavesh the veiled market (so'leah)	cartel master's gearglider	2.2	22
+necrotic wake mythic (nalthor the rimebinder)	marrowfang	0.8	8
