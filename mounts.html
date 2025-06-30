@@ -39,9 +39,21 @@
             padding: 5px 10px;
             cursor: pointer;
         }
+        .coord-inputs input {
+            width: 45%;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
+
+    <div id="pin-gate">
+        <h2>Enter PIN to access the website</h2>
+        <input type="password" id="pin-input" placeholder="PIN">
+        <button onclick="submitPin()">Submit</button>
+    </div>
+
+    <div id="page-content">
 
     <div class="header">
         <h1>Edge of Sanity</h1>
@@ -66,7 +78,7 @@
                     <tr>
                         <th>Mount Name</th>
                         <th>Location</th>
-                        <th>Coordinates</th>
+                        <th>NPC</th>
                         <th>Old Drop Rate</th>
                         <th>New Drop Rate</th>
                         <th>Actions</th>
@@ -77,7 +89,10 @@
                     <tr>
                         <td>Sample Mount</td>
                         <td>Sample Location</td>
-                        <td>X:100, Y:200</td>
+                        <td>
+                            <span class="coord-x">100</span>, <span class="coord-y">200</span>
+                            <button onclick="copyCoordinates(this)">Copy</button>
+                        </td>
                         <td>1%</td>
                         <td>0.5%</td>
                         <td class="action-buttons">
@@ -90,7 +105,10 @@
                     <tr>
                         <td><input type="text" id="newMountName" class="edit-input" placeholder="Mount Name"></td>
                         <td><input type="text" id="newLocation" class="edit-input" placeholder="Location"></td>
-                        <td><input type="text" id="newCoordinates" class="edit-input" placeholder="Coordinates"></td>
+                        <td class="coord-inputs">
+                            <input type="text" id="newXCoord" class="edit-input" placeholder="X">
+                            <input type="text" id="newYCoord" class="edit-input" placeholder="Y">
+                        </td>
                         <td><input type="text" id="newOldDropRate" class="edit-input" placeholder="Old Drop Rate"></td>
                         <td><input type="text" id="newNewDropRate" class="edit-input" placeholder="New Drop Rate"></td>
                         <td class="action-buttons">
@@ -108,16 +126,20 @@
             const tableBody = document.getElementById('mounts-table-body');
             const newMountName = document.getElementById('newMountName').value;
             const newLocation = document.getElementById('newLocation').value;
-            const newCoordinates = document.getElementById('newCoordinates').value;
+            const newXCoord = document.getElementById('newXCoord').value;
+            const newYCoord = document.getElementById('newYCoord').value;
             const newOldDropRate = document.getElementById('newOldDropRate').value;
             const newNewDropRate = document.getElementById('newNewDropRate').value;
 
-            if (newMountName && newLocation && newCoordinates && newOldDropRate && newNewDropRate) {
+            if (newMountName && newLocation && newXCoord && newYCoord && newOldDropRate && newNewDropRate) {
                 const newRow = tableBody.insertRow();
                 newRow.innerHTML = `
                     <td>${newMountName}</td>
                     <td>${newLocation}</td>
-                    <td>${newCoordinates}</td>
+                    <td>
+                        <span class="coord-x">${newXCoord}</span>, <span class="coord-y">${newYCoord}</span>
+                        <button onclick="copyCoordinates(this)">Copy</button>
+                    </td>
                     <td>${newOldDropRate}</td>
                     <td>${newNewDropRate}</td>
                     <td class="action-buttons">
@@ -129,7 +151,8 @@
                 // Clear input fields
                 document.getElementById('newMountName').value = '';
                 document.getElementById('newLocation').value = '';
-                document.getElementById('newCoordinates').value = '';
+                document.getElementById('newXCoord').value = '';
+                document.getElementById('newYCoord').value = '';
                 document.getElementById('newOldDropRate').value = '';
                 document.getElementById('newNewDropRate').value = '';
             } else {
@@ -139,19 +162,46 @@
 
         function editRow(button) {
             const row = button.parentNode.parentNode;
-            const cells = row.querySelectorAll('td:not(.action-buttons)');
+            const cells = row.querySelectorAll('td');
+
+            // Get the NPC coordinates cell (index 2)
+            const npcCell = cells[2];
 
             if (button.textContent === 'Edit') {
-                cells.forEach(cell => {
-                    const text = cell.textContent;
-                    cell.innerHTML = `<input type="text" class="edit-input" value="${text}">`;
+                // Store current values for NPC cell
+                const xCoord = npcCell.querySelector('.coord-x').textContent;
+                const yCoord = npcCell.querySelector('.coord-y').textContent;
+
+                // Replace NPC cell content with input fields
+                npcCell.innerHTML = `
+                    <input type="text" class="edit-input" value="${xCoord}" data-coord="x">
+                    <input type="text" class="edit-input" value="${yCoord}" data-coord="y">
+                `;
+
+                // Handle other cells
+                cells.forEach((cell, index) => {
+                    if (index !== 2 && index !== cells.length - 1) { // Exclude NPC cell and Actions cell
+                        const text = cell.textContent;
+                        cell.innerHTML = `<input type="text" class="edit-input" value="${text}">`;
+                    }
                 });
                 button.textContent = 'Save';
             } else {
-                cells.forEach(cell => {
-                    const input = cell.querySelector('input');
-                    if (input) {
-                        cell.textContent = input.value;
+                // Save NPC cell content
+                const newXCoord = npcCell.querySelector('input[data-coord="x"]').value;
+                const newYCoord = npcCell.querySelector('input[data-coord="y"]').value;
+                npcCell.innerHTML = `
+                    <span class="coord-x">${newXCoord}</span>, <span class="coord-y">${newYCoord}</span>
+                    <button onclick="copyCoordinates(this)">Copy</button>
+                `;
+
+                // Save other cells
+                cells.forEach((cell, index) => {
+                    if (index !== 2 && index !== cells.length - 1) { // Exclude NPC cell and Actions cell
+                        const input = cell.querySelector('input');
+                        if (input) {
+                            cell.textContent = input.value;
+                        }
                     }
                 });
                 button.textContent = 'Edit';
@@ -161,6 +211,19 @@
         function deleteRow(button) {
             const row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
+        }
+
+        function copyCoordinates(button) {
+            const row = button.parentNode.parentNode;
+            const xCoord = row.querySelector('.coord-x').textContent;
+            const yCoord = row.querySelector('.coord-y').textContent;
+            const textToCopy = `/way ${xCoord} ${yCoord}`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert(`Copied: ${textToCopy}`);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
         }
     </script>
 
