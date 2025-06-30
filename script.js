@@ -12,6 +12,8 @@ function checkPin() {
     } else {
         document.getElementById('pin-gate').style.display = 'flex';
         document.getElementById('page-content').style.display = 'none';
+        // Clear the session storage if the PIN is incorrect or not set
+        sessionStorage.removeItem('websitePin');
     }
 }
 
